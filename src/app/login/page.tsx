@@ -1,44 +1,44 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // Dùng useRouter để chuyển trang bằng code
-import { getMe, login } from "@/auth/auth.service";
-import { useAuth } from "@/auth/AuthContext";
-import axios from "@/api/axios";
+import { login } from "@/auth/auth.service";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter(); // Khởi tạo router
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
+    
     try {
-      // 1. Đợi login xong hoàn toàn (đã lưu token vào storage/cookie)
+      // 1. Gọi Backend lấy Token
       const res = await login(email, password);
-      console.log("Login successful, user info:", res);
-      // 2. Chỉ chuyển trang sau khi login thành công
-      const response = await fetch('/api/auth/token', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ refreshToken: res.refreshToken }),
-        });
-
-        if (!response.ok) {
-            throw new Error('Không thể set cookie xác thực');
-        }
-
-        console.log('--- Set Cookie thành công ---');
-
-        // 3. Chuyển trang (Nên dùng window.location để Middleware nhận cookie ngay lập tức)
-        window.location.href = '/profile';
-      router.push("/profile"); 
       
+      // 2. Gửi sang Next.js Server để set Cookie "chính chủ"
+      const response = await fetch('/api/auth/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken: res.refreshToken }),
+      });
+
+      if (!response.ok) throw new Error('CORS/Cookie Error');
+
+      console.log('--- Set Cookie & Auth OK ---');
+
+      // 3. ĐIỀU HƯỚNG QUAN TRỌNG:
+      // Dùng window.location.replace để ép trình duyệt tải lại từ Server
+      // và XÓA trang login khỏi lịch sử (nhấn Back sẽ không quay lại login nữa)
+      window.location.replace('/profile');
+
     } catch (err) {
-      alert("Login failed");
-    } 
+      console.error(err);
+      alert("Đăng nhập thất bại, vui lòng kiểm tra lại!");
+    } finally {
+      setIsLoading(false);
+    }
   };
- 
+
   return (
     <div>
       <h2>Login</h2>
@@ -46,17 +46,19 @@ export default function Login() {
         placeholder="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        disabled={isLoading}
       />
       <input
         placeholder="password"
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        disabled={isLoading}
       />
-
-      {/* Button bình thường, không bọc Link */}
-      <button onClick={handleLogin}>Login</button>
-      <p>bạn chưa có tài khoản? <a href="/register">Đăng ký</a></p>
+      <button onClick={handleLogin} disabled={isLoading}>
+        {isLoading ? "Đang xử lý..." : "Login"}
+      </button>
+      <p>Bạn chưa có tài khoản? <a href="/register">Đăng ký</a></p>
     </div>
   );
 }
