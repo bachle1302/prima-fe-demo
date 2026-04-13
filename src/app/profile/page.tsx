@@ -1,7 +1,6 @@
 "use client";
-import { getMe, logout, logoutAll } from "@/auth/auth.service";
+import { logout, logoutAll } from "@/auth/auth.service";
 import { useAuth } from "@/auth/AuthContext";
-import { useEffect, useState } from "react";
 
 export default function Profile() {
   const { user } = useAuth();
