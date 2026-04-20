@@ -1,4 +1,3 @@
-import { refreshToken } from './../../messenger/messenger-frontend/src/api/authApi';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
