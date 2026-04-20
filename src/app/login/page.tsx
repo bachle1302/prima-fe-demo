@@ -13,18 +13,10 @@ export default function Login() {
     
     try {
       // 1. Gọi Backend lấy Token
-      const res = await login(email, password);
+      await login(email, password);
       
       // 2. Gửi sang Next.js Server để set Cookie "chính chủ"
-      const response = await fetch('/api/auth/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken: res.refreshToken }),
-      });
-
-      if (!response.ok) throw new Error('CORS/Cookie Error');
-
-      console.log('--- Set Cookie & Auth OK ---');
+ 
 
       // 3. ĐIỀU HƯỚNG QUAN TRỌNG:
       // Dùng window.location.replace để ép trình duyệt tải lại từ Server

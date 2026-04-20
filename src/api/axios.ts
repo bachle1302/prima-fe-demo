@@ -17,7 +17,7 @@ const processQueue = (error: any, token: string | null = null) => {
 };
 
 const api = axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_API_URL_BACKEND}/api` || "http://localhost:3000/api",
+  baseURL: "/api",
   withCredentials: true, // Quan trọng để gửi kèm Refresh Token trong Cookie
 });
 

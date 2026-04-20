@@ -20,12 +20,10 @@ export const getMe = async () => {
 
 export const logout = async () => {
   await api.post("/auth/logout");
-  await fetch('/api/auth/logout', { method: 'POST' });
   clearAccessToken();
 };
 
 export const logoutAll = async () => {
   await api.post("/auth/logoutAll");
-  await fetch('/api/auth/logout', { method: 'POST' });
   clearAccessToken();
 };

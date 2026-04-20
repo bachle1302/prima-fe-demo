@@ -1,3 +1,4 @@
+import { refreshToken } from './../../messenger/messenger-frontend/src/api/authApi';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
@@ -5,7 +6,7 @@ const protectedRoutes = ['/profile', '/dashboard', '/settings'];
 const authRoutes = ['/login', '/register'];
 
 export function middleware(request: NextRequest) {
-  const refreshToken = request.cookies.get('refreshTokenNextjs')?.value;
+  const refreshToken = request.cookies.get('refreshToken')?.value;
   const { pathname } = request.nextUrl;
 
   // 1. Logic chuyển hướng cho khách (Chưa login)
